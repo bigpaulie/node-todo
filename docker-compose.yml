@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  
+  database: 
+    image: mysql:8
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=1
+      - MYSQL_USER=goapp
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=goapp
+    ports: 
+      - '3306:3306'
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - backend
+
+  application:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8080
+    ports:
+      - '8080:8080'
+    depends_on:
+      - database
+    networks:
+      - backend
+
+
+volumes:
+  database:
+
+networks:
+  backend:
